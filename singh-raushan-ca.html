@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Singh Raushan & Company | Chartered Accountants</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Geist+Mono:wght@300;400;500&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f3ee;
+    --gray-100: #e8e6e1;
+    --gray-200: #c8c5be;
+    --gray-500: #6b6860;
+    --gray-700: #3a3835;
+    --accent: #c8a96e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 10px; height: 10px;
+    background: var(--white);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transition: transform 0.15s ease;
+  }
+  .cursor-follower {
+    position: fixed;
+    top: 0; left: 0;
+    width: 40px; height: 40px;
+    border: 1px solid rgba(245,243,238,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.08s linear;
+  }
+  .cursor.expand { transform: scale(4); }
+  .cursor-follower.expand { transform: scale(0.3); border-color: var(--accent); }
+
+  /* Loader */
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .loader-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: var(--white);
+    overflow: hidden;
+  }
+  .loader-bar {
+    width: 200px;
+    height: 1px;
+    background: var(--gray-700);
+    position: relative;
+    overflow: hidden;
+  }
+  .loader-bar::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    animation: loadBar 2s ease forwards;
+  }
+  @keyframes loadBar { to { width: 100%; } }
+  .loader-percent {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    letter-spacing: 0.2em;
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 1.5rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    mix-blend-mode: difference;
+  }
+  nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.8), transparent);
+    pointer-events: none;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-links a {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray-200);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    cursor: none;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-cta:hover { background: var(--accent); transform: translateY(-1px); }
+
+  /* Hero */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 4rem 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 40%, rgba(200,169,110,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(245,243,238,0.03) 0%, transparent 50%);
+    z-index: 0;
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,243,238,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,243,238,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    z-index: 0;
+  }
+  .hero-eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 300;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .hero-title .line { display: block; overflow: hidden; }
+  .hero-title .line span { display: block; transform: translateY(110%); }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 4rem;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+  }
+  .hero-desc {
+    max-width: 380px;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--gray-200);
+    font-weight: 300;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 4rem;
+  }
+  .stat-item { text-align: right; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--white);
+  }
+  .stat-num span { color: var(--accent); font-size: 1.5rem; vertical-align: super; }
+  .stat-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 2rem; right: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 1;
+    opacity: 0;
+  }
+  .hero-scroll span {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* Marquee */
+  .marquee-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--gray-700);
+    border-bottom: 1px solid var(--gray-700);
+    padding: 1rem 0;
+    background: var(--gray-700);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    animation: marquee 25s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--gray-200);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  .marquee-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* Section base */
+  section { position: relative; }
+  .section-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .section-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gray-500);
+    margin-bottom: 3rem;
+  }
+
+  /* About */
+  #about {
+    padding: 8rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .about-left {}
+  .about-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 2rem;
+  }
+  .about-heading em { font-style: italic; color: var(--accent); }
+  .about-body {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--gray-200);
+    margin-bottom: 1.5rem;
+  }
+  .about-right {
+    position: relative;
+  }
+  .about-card {
+    background: var(--gray-700);
+    border: 1px solid rgba(245,243,238,0.07);
+    padding: 3rem;
+    position: relative;
+  }
+  .about-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 60px; height: 3px;
+    background: var(--accent);
+  }
+  .principal-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+  .principal-title {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .principal-quals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .qual-badge {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--gray-500);
+    color: var(--gray-200);
+  }
+  .principal-bio {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--gray-200);
+  }
+  .about-decoration {
+    position: absolute;
+    top: -2rem; right: -2rem;
+    width: 120px; height: 120px;
+    border: 1px solid rgba(200,169,110,0.2);
+    z-index: -1;
+  }
+
+  /* Services */
+  #services {
+    padding: 8rem 4rem;
+    background: var(--white);
+    color: var(--black);
+  }
+  .services-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 5rem;
+  }
+  .services-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--black);
+  }
+  .services-heading em { font-style: italic; color: var(--accent); }
+  .services-desc {
+    max-width: 320px;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--gray-500);
+    text-align: right;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--gray-100);
+  }
+  .service-card {
+    padding: 2.5rem;
+    border-right: 1px solid var(--gray-100);
+    border-bottom: 1px solid var(--gray-100);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s ease;
+    cursor: none;
+  }
+  .service-card:nth-child(3n) { border-right: none; }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--black);
+    transform: translateY(101%);
+    transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    z-index: 0;
+  }
+  .service-card:hover::before { transform: translateY(0); }
+  .service-card:hover .service-num,
+  .service-card:hover .service-name,
+  .service-card:hover .service-desc { color: var(--white); }
+  .service-card:hover .service-icon { filter: invert(1); }
+  .service-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--gray-500);
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+    transition: color 0.4s;
+  }
+  .service-icon {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    position: relative;
+    z-index: 1;
+    transition: filter 0.4s;
+  }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--black);
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    transition: color 0.4s;
+    line-height: 1.2;
+  }
+  .service-desc {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--gray-500);
+    position: relative;
+    z-index: 1;
+    transition: color 0.4s;
+  }
+
+  /* Process */
+  #process {
+    padding: 8rem 4rem;
+  }
+  .process-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+  .process-heading em { font-style: italic; color: var(--accent); }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 3rem;
+    left: 12.5%;
+    right: 12.5%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gray-500), var(--gray-500), transparent);
+    z-index: 0;
+  }
+  .process-step {
+    padding: 0 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .step-circle {
+    width: 60px; height: 60px;
+    border: 1px solid var(--gray-500);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    background: var(--black);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--accent);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  .process-step:hover .step-circle {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--black);
+  }
+  .step-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+  .step-desc {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--gray-500);
+  }
+
+  /* Branches */
+  #branches {
+    padding: 8rem 4rem;
+    background: linear-gradient(135deg, var(--gray-700) 0%, #1a1917 100%);
+  }
+  .branches-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    margin-bottom: 4rem;
+  }
+  .branches-heading em { font-style: italic; color: var(--accent); }
+  .branches-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .branch-card {
+    border: 1px solid rgba(245,243,238,0.1);
+    padding: 2.5rem;
+    position: relative;
+    transition: border-color 0.4s, transform 0.4s;
+    cursor: none;
+  }
+  .branch-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+  .branch-card.hq {
+    grid-column: span 2;
+    background: rgba(200,169,110,0.05);
+    border-color: rgba(200,169,110,0.3);
+  }
+  .branch-type {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .branch-city {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+  .branch-address {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--gray-500);
+  }
+  .branch-dot {
+    position: absolute;
+    top: 2.5rem; right: 2.5rem;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  /* Testimonials */
+  #testimonials {
+    padding: 8rem 4rem;
+    background: var(--white);
+    color: var(--black);
+  }
+  .testimonials-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 5rem;
+    color: var(--black);
+  }
+  .testimonials-heading em { font-style: italic; color: var(--accent); }
+  .testimonials-track-wrap {
+    overflow: hidden;
+    position: relative;
+  }
+  .testimonials-track {
+    display: flex;
+    gap: 2rem;
+    transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  .testimonial-card {
+    min-width: calc(50% - 1rem);
+    border: 1px solid var(--gray-100);
+    padding: 3rem;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .testimonial-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    line-height: 0.5;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .testimonial-text {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--gray-700);
+    font-style: italic;
+    margin-bottom: 2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+  }
+  .testimonial-author {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+  }
+  .testimonials-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .t-btn {
+    width: 48px; height: 48px;
+    border: 1px solid var(--gray-200);
+    background: none;
+    cursor: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: background 0.3s, border-color 0.3s;
+    color: var(--black);
+  }
+  .t-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  /* Contact */
+  #contact {
+    padding: 8rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+  }
+  .contact-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+  }
+  .contact-heading em { font-style: italic; color: var(--accent); }
+  .contact-info { margin-top: 2rem; }
+  .contact-item {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--gray-700);
+  }
+  .contact-item-icon {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    min-width: 80px;
+    padding-top: 0.15rem;
+  }
+  .contact-item-val {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--gray-200);
+  }
+  .contact-form {}
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  .form-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .form-input, .form-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--gray-700);
+    padding: 0.75rem 0;
+    color: var(--white);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { resize: none; height: 120px; }
+  .form-input::placeholder, .form-textarea::placeholder { color: var(--gray-500); }
+  .form-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    padding: 1rem 2.5rem;
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .form-submit:hover { background: var(--accent); transform: translateY(-2px); }
+  .submit-arrow {
+    transition: transform 0.3s;
+  }
+  .form-submit:hover .submit-arrow { transform: translateX(5px); }
+
+  /* Footer */
+  footer {
+    padding: 3rem 4rem;
+    border-top: 1px solid var(--gray-700);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+  }
+  .footer-logo span { color: var(--accent); }
+  .footer-copy {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--gray-500);
+  }
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .footer-links a {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* Reveal animations */
+  .reveal { opacity: 0; transform: translateY(40px); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gray-700); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* Horizontal rule divider */
+  .divider {
+    width: 60px; height: 1px;
+    background: var(--accent);
+    margin: 2rem 0;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    nav { padding: 1.5rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero { padding: 0 1.5rem 5rem; }
+    #about, #contact { grid-template-columns: 1fr; padding: 5rem 1.5rem; gap: 3rem; }
+    #services, #process, #branches, #testimonials { padding: 5rem 1.5rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .process-steps::before { display: none; }
+    .branches-grid { grid-template-columns: 1fr; }
+    .branch-card.hq { grid-column: span 1; }
+    .testimonial-card { min-width: 100%; }
+    .hero-stats { gap: 2rem; }
+    .services-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .services-desc { text-align: left; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursorFollower"></div>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-text" id="loaderText">SR & Co.</div>
+  <div class="loader-bar"></div>
+  <div class="loader-percent" id="loaderPercent">0%</div>
+</div>
+
+<!-- Navigation -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Singh Raushan <span>&</span> Co.</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#branches">Offices</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Consult Now</a>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <p class="hero-eyebrow">Chartered Accountants — Est. 2012</p>
+  <h1 class="hero-title">
+    <span class="line"><span>Financial</span></span>
+    <span class="line"><span>Precision.</span></span>
+    <span class="line"><span><em>Trusted</em></span></span>
+    <span class="line"><span>Advisory.</span></span>
+  </h1>
+  <div class="hero-meta">
+    <p class="hero-desc">A premier Chartered Accountancy firm delivering Audit & Assurance, Finance Advisory, and Taxation services across Jharkhand, Bihar & Delhi.</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">12<span>+</span></div>
+        <div class="stat-label">Years of Excellence</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Office Locations</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">500<span>+</span></div>
+        <div class="stat-label">Clients Served</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item"><span class="marquee-dot"></span>Audit & Assurance</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Income Tax Returns</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>GST Compliance</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>TDS Management</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Company Formation</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Financial Advisory</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Trademark Registration</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Digital Signatures</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Startup Services</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Loan Project Reports</div>
+    <!-- duplicate for infinite scroll -->
+    <div class="marquee-item"><span class="marquee-dot"></span>Audit & Assurance</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Income Tax Returns</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>GST Compliance</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>TDS Management</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Company Formation</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Financial Advisory</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Trademark Registration</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Digital Signatures</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Startup Services</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Loan Project Reports</div>
+  </div>
+</div>
+
+<!-- About -->
+<section id="about">
+  <div class="about-left">
+    <p class="section-label reveal">About the Firm</p>
+    <p class="section-num reveal">— 01</p>
+    <h2 class="about-heading reveal">Where <em>Integrity</em><br>Meets Expertise</h2>
+    <div class="divider reveal"></div>
+    <p class="about-body reveal">Established as a partnership firm, M/s Singh Raushan & Company has been delivering professional services with an unwavering commitment to excellence since 2012. Our firm is a trusted name for Audit & Assurance, Finance Advisory, and Taxation across multiple states.</p>
+    <p class="about-body reveal">We believe in building long-term relationships with our clients through personalized attention, deep technical knowledge, and the highest standards of integrity and professionalism.</p>
+  </div>
+  <div class="about-right reveal">
+    <div class="about-decoration"></div>
+    <div class="about-card">
+      <p class="principal-title">Principal Chartered Accountant</p>
+      <h3 class="principal-name">CA Rajani Singh Raushan</h3>
+      <div class="principal-quals">
+        <span class="qual-badge">FCA</span>
+        <span class="qual-badge">M.Com (F&T)</span>
+        <span class="qual-badge">DISA</span>
+        <span class="qual-badge">FAFD</span>
+        <span class="qual-badge">CCAB</span>
+      </div>
+      <p class="principal-bio">A Fellow Chartered Accountant with deep expertise across Direct Taxation, GST, Audit, and Financial Advisory. Known for her meticulous approach, promptness, and immense dedication to client success.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services">
+  <div class="services-header">
+    <div>
+      <p class="section-label reveal" style="color:var(--gray-500)">What We Offer</p>
+      <p class="section-num reveal" style="color:var(--gray-500)">— 02</p>
+      <h2 class="services-heading reveal">Our <em>Services</em></h2>
+    </div>
+    <p class="services-desc reveal">Comprehensive financial and legal services tailored to businesses of all sizes and individuals across India.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <span class="service-num">01</span>
+      <span class="service-icon">📊</span>
+      <h3 class="service-name">Audit & Assurance</h3>
+      <p class="service-desc">Statutory audits, tax audits, internal audits, and bank audits with comprehensive assurance engagements for all entity types.</p>
+    </div>
+    <div class="service-card reveal">
+      <span class="service-num">02</span>
+      <span class="service-icon">🧾</span>
+      <h3 class="service-name">Income Tax & ITR</h3>
+      <p class="service-desc">Individual and corporate income tax return filing, tax planning, advance tax computation, and representation before tax authorities.</p>
+    </div>
+    <div class="service-card reveal">
+      <span class="service-num">03</span>
+      <span class="service-icon">💼</span>
+      <h3 class="service-name">GST Compliance</h3>
+      <p class="service-desc">GST registration, monthly/quarterly return filing (GSTR-1, GSTR-3B), GST audits, and advisory on complex transactions.</p>
+    </div>
+    <div class="service-card reveal">
+      <span class="service-num">04</span>
+      <span class="service-icon">🏢</span>
+      <h3 class="service-name">Company Formation</h3>
+      <p class="service-desc">Pvt. Ltd., LLP, OPC, NGO/Trust formation, MSME registration, startup incorporation and compliance advisory.</p>
+    </div>
+    <div class="service-card reveal">
+      <span class="service-num">05</span>
+      <span class="service-icon">📑</span>
+      <h3 class="service-name">TDS Management</h3>
+      <p class="service-desc">TDS return filing (24Q, 26Q, 27Q), TAN registration, challan rectification, and lower deduction certificate applications.</p>
+    </div>
+    <div class="service-card reveal">
+      <span class="service-num">06</span>
+      <span class="service-icon">🚀</span>
+      <h3 class="service-name">Startup & Advisory</h3>
+      <p class="service-desc">Loan project reports, FSSAI, IEC, GEM registration, trademark, digital signature certificates, and trade license.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section id="process">
+  <p class="section-label reveal" style="text-align:center;">How We Work</p>
+  <p class="section-num reveal" style="text-align:center;">— 03</p>
+  <h2 class="process-heading reveal">Our <em>Process</em></h2>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="step-circle">I</div>
+      <h3 class="step-name">Initial Consultation</h3>
+      <p class="step-desc">We begin with a thorough understanding of your financial goals, business structure, and specific compliance needs.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-circle">II</div>
+      <h3 class="step-name">Tailored Strategy</h3>
+      <p class="step-desc">Our experts craft a personalized plan aligned with your objectives, ensuring optimal tax efficiency and legal compliance.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-circle">III</div>
+      <h3 class="step-name">Execution</h3>
+      <p class="step-desc">Meticulous documentation, timely filing, and proactive communication at every step of the engagement.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-circle">IV</div>
+      <h3 class="step-name">Ongoing Support</h3>
+      <p class="step-desc">Continuous advisory support, regulatory updates, and dedicated assistance for all your future financial decisions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Branches -->
+<section id="branches">
+  <p class="section-label reveal">Our Presence</p>
+  <p class="section-num reveal">— 04</p>
+  <h2 class="branches-heading reveal">Offices Across <em>India</em></h2>
+  <div class="branches-grid">
+    <div class="branch-card hq reveal">
+      <div class="branch-dot"></div>
+      <p class="branch-type">Headquarters</p>
+      <h3 class="branch-city">Ranchi, Jharkhand</h3>
+      <p class="branch-address">57, Kadru Bypass, Between Canara Bank & New Life Hospital,<br>Near Hotel Yuvraj Palace, Doranda, Ranchi — 834002</p>
+    </div>
+    <div class="branch-card reveal">
+      <div class="branch-dot"></div>
+      <p class="branch-type">Branch Office</p>
+      <h3 class="branch-city">Ranchi (Hindpiri)</h3>
+      <p class="branch-address">6, P.P. Compound, Near Sujata Chowk,<br>Hindpiri, Ranchi — 834001</p>
+    </div>
+    <div class="branch-card reveal">
+      <div class="branch-dot"></div>
+      <p class="branch-type">Branch Office</p>
+      <h3 class="branch-city">Bokaro, Jharkhand</h3>
+      <p class="branch-address">Manik Market, Near Ram Ratan High School,<br>Old BDO Office, Main Road Phusro — 825102</p>
+    </div>
+    <div class="branch-card reveal">
+      <div class="branch-dot"></div>
+      <p class="branch-type">State Office</p>
+      <h3 class="branch-city">Muzaffarpur, Bihar</h3>
+      <p class="branch-address">State Office — Bihar<br>Serving clients across the region</p>
+    </div>
+    <div class="branch-card reveal">
+      <div class="branch-dot"></div>
+      <p class="branch-type">State Office</p>
+      <h3 class="branch-city">Laxmi Nagar, Delhi</h3>
+      <p class="branch-address">State Office — Delhi NCR<br>Serving clients across the region</p>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials">
+  <p class="section-label reveal" style="color:var(--gray-500);text-align:center;">Client Voices</p>
+  <p class="section-num reveal" style="color:var(--gray-500);text-align:center;">— 05</p>
+  <h2 class="testimonials-heading reveal">What Our <em>Clients</em> Say</h2>
+  <div class="testimonials-track-wrap reveal">
+    <div class="testimonials-track" id="testimonialTrack">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Excellent professional and expert CA Firm in Ranchi city. Thanks to CA Rajani madam and her experienced team for helping me with GST queries. Good quality and fast services.</p>
+        <p class="testimonial-author">— CA Saurabh Tekriwal, Business Owner</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">One of the best CA firms for any kind of statutory compliance and GST registration in Ranchi. Highly recommended to everyone who needs CA-related work. Dedicated professionals throughout.</p>
+        <p class="testimonial-author">— Verified Client, Ranchi</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Team of dedicated professionals providing quality services. Staff is well-mannered and knowledgeable. Very helpful to clients and all paperwork is done promptly. Best CA firm in Ranchi.</p>
+        <p class="testimonial-author">— Verified Client, Jharkhand</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Ms. Singh Raushan is a qualified FCA with immense knowledge and impeccable value in her work. She is very helpful and does all paperwork promptly. Strongly recommend for any financial needs.</p>
+        <p class="testimonial-author">— Corporate Client, Delhi</p>
+      </div>
+    </div>
+  </div>
+  <div class="testimonials-nav">
+    <button class="t-btn" id="tPrev">←</button>
+    <button class="t-btn" id="tNext">→</button>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="contact-left">
+    <p class="section-label reveal">Get In Touch</p>
+    <p class="section-num reveal">— 06</p>
+    <h2 class="contact-heading reveal">Let's <em>Start</em><br>a Conversation</h2>
+    <div class="divider reveal"></div>
+    <p class="about-body reveal" style="color:var(--gray-200)">Have a question or need professional financial advice? Our team is ready to help you navigate complex financial regulations with clarity and confidence.</p>
+    <div class="contact-info">
+      <div class="contact-item reveal">
+        <span class="contact-item-icon">Address</span>
+        <span class="contact-item-val">57, Kadru Bypass, Doranda,<br>Ranchi, Jharkhand — 834002</span>
+      </div>
+      <div class="contact-item reveal">
+        <span class="contact-item-icon">Hours</span>
+        <span class="contact-item-val">Monday – Saturday: 9:00 AM – 7:00 PM<br>Sunday: Closed</span>
+      </div>
+      <div class="contact-item reveal">
+        <span class="contact-item-icon">Offices</span>
+        <span class="contact-item-val">Ranchi · Bokaro · Giridih · Muzaffarpur · Delhi</span>
+      </div>
+    </div>
+  </div>
+  <div class="contact-form reveal">
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" class="form-input" placeholder="Your full name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Service Required</label>
+      <input type="text" class="form-input" placeholder="e.g. GST Filing, Audit, ITR...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message</label>
+      <textarea class="form-textarea" placeholder="Tell us about your requirements..."></textarea>
+    </div>
+    <button class="form-submit">
+      Send Enquiry <span class="submit-arrow">→</span>
+    </button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">Singh Raushan <span>&</span> Company</div>
+  <p class="footer-copy">© 2024 Singh Raushan & Co. — Chartered Accountants. All rights reserved.</p>
+  <ul class="footer-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  // ─── Cursor ───
+  const cursor = document.getElementById('cursor');
+  const follower = document.getElementById('cursorFollower');
+  let mx = 0, my = 0, fx = 0, fy = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+  });
+
+  function animFollower() {
+    fx += (mx - fx - 20) * 0.12;
+    fy += (my - fy - 20) * 0.12;
+    follower.style.transform = `translate(${fx}px, ${fy}px)`;
+    requestAnimationFrame(animFollower);
+  }
+  animFollower();
+
+  document.querySelectorAll('a, button, .service-card, .branch-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('expand'); follower.classList.add('expand'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('expand'); follower.classList.remove('expand'); });
+  });
+
+  // ─── Loader ───
+  const loader = document.getElementById('loader');
+  const pct = document.getElementById('loaderPercent');
+  let count = 0;
+  const counter = setInterval(() => {
+    count++;
+    pct.textContent = count + '%';
+    if (count >= 100) {
+      clearInterval(counter);
+      gsap.to(loader, { opacity: 0, duration: 0.8, delay: 0.3, onComplete: () => loader.style.display = 'none' });
+      initAnimations();
+    }
+  }, 18);
+
+  // ─── GSAP Animations ───
+  function initAnimations() {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero eyebrow
+    gsap.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: 'power3.out' });
+
+    // Hero title lines
+    gsap.utils.toArray('.hero-title .line span').forEach((el, i) => {
+      gsap.to(el, { y: 0, duration: 1.2, delay: 0.4 + i * 0.12, ease: 'power4.out' });
+    });
+
+    // Hero meta
+    gsap.to('.hero-meta', { opacity: 1, y: 0, duration: 1, delay: 1.2, ease: 'power3.out' });
+    gsap.to('.hero-scroll', { opacity: 1, y: 0, duration: 1, delay: 1.6, ease: 'power3.out' });
+
+    // Scroll reveals
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+        }
+      );
+    });
+
+    // Counter animation
+    gsap.utils.toArray('.stat-num').forEach(el => {
+      const target = parseInt(el.textContent);
+      const sup = el.querySelector('span');
+      gsap.fromTo({ val: 0 }, { val: target }, {
+        duration: 2,
+        delay: 1.5,
+        ease: 'power2.out',
+        onUpdate: function() {
+          el.textContent = Math.round(this.targets()[0].val);
+          if (sup) el.appendChild(sup);
+        }
+      });
+    });
+
+    // Nav background on scroll
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      nav.style.mixBlendMode = window.scrollY > 80 ? 'normal' : 'difference';
+      if (window.scrollY > 80) {
+        nav.style.background = 'rgba(10,10,10,0.95)';
+        nav.style.backdropFilter = 'blur(20px)';
+        nav.style.borderBottom = '1px solid rgba(245,243,238,0.06)';
+      } else {
+        nav.style.background = '';
+        nav.style.backdropFilter = '';
+        nav.style.borderBottom = '';
+      }
+    });
+
+    // Stagger service cards
+    gsap.utils.toArray('.service-card').forEach((card, i) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.6,
+          delay: i * 0.08,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: '#services', start: 'top 70%', toggleActions: 'play none none none' }
+        }
+      );
+    });
+  }
+
+  // ─── Testimonial Slider ───
+  let tIdx = 0;
+  const track = document.getElementById('testimonialTrack');
+  const cards = track.querySelectorAll('.testimonial-card');
+  const total = cards.length;
+
+  function slideTo(idx) {
+    tIdx = (idx + total) % total;
+    track.style.transform = `translateX(calc(-${tIdx * 50}% - ${tIdx}rem))`;
+  }
+
+  document.getElementById('tNext').addEventListener('click', () => slideTo(tIdx + 1));
+  document.getElementById('tPrev').addEventListener('click', () => slideTo(tIdx - 1));
+
+  // Auto-slide
+  setInterval(() => slideTo(tIdx + 1), 5000);
+
+  // ─── Smooth anchor ───
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
